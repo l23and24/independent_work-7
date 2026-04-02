@@ -6,122 +6,138 @@
     <title>Зміст репозиторію</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #f8fafc;
-            font-family: 'Inter', sans-serif;
-        }
-        .file-card {
-            transition: all 0.2s ease;
-        }
-        .file-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
+        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .file-card { transition: all 0.2s ease; }
+        .file-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4 md:p-10 text-slate-800">
     <div class="max-w-4xl mx-auto">
         <header class="mb-10 text-center">
-            <h1 id="repo-title" class="text-3xl font-bold text-slate-800 mb-2">Завантаження змісту...</h1>
-            <p class="text-slate-500">Список файлів генерується автоматично через GitHub API</p>
+            <h1 id="repo-title" class="text-3xl font-bold mb-2 text-blue-900">Завантаження...</h1>
+            <p id="repo-description" class="text-slate-500">Отримання списку файлів через GitHub API</p>
         </header>
 
-        <div id="loader" class="flex justify-center my-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <!-- Індикатор завантаження -->
+        <div id="loader" class="flex flex-col items-center justify-center my-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mb-4"></div>
+            <p class="text-slate-400">Аналізуємо репозиторій...</p>
         </div>
 
-        <div id="error-msg" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-6 text-red-700">
-            <p class="font-bold">Помилка!</p>
-            <p>Не вдалося отримати дані. Перевірте налаштування репозиторію або ліміти API.</p>
+        <!-- Повідомлення про помилку -->
+        <div id="error-msg" class="hidden bg-red-50 border-l-4 border-red-500 p-6 mb-10 rounded-r-lg">
+            <h3 class="font-bold text-red-800 text-lg mb-2">Щось пішло не так 🔍</h3>
+            <p id="error-details" class="text-red-700"></p>
+            <div class="mt-4 p-3 bg-red-100 rounded text-xs font-mono text-red-900" id="debug-info"></div>
+            <p class="mt-4 text-sm text-slate-600">Порада: переконайтеся, що репозиторій <b>публічний</b> та перевірте налаштування MANUAL_USER/REPO в коді файлу.</p>
         </div>
 
-        <ul id="file-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Файли з'являться тут -->
-        </ul>
+        <!-- Список файлів -->
+        <ul id="file-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></ul>
 
         <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-            <p>Створено автоматично для вашого GitHub-проекту</p>
+            <p>Generated via GitHub API Automation</p>
         </footer>
     </div>
 
     <script>
-        // --- НАЛАШТУВАННЯ ---
-        // Якщо ви використовуєте GitHub Pages, скрипт спробує визначити репозиторій автоматично.
-        // Якщо ні - введіть дані вручну нижче:
-        const USERNAME = window.location.hostname.split('.')[0]; 
-        const REPO_NAME = window.location.pathname.split('/')[1];
-        
-        // Ви можете ігнорувати певні файли
-        const IGNORED_FILES = ['index.html', 'README.md', 'LICENSE', '.gitignore'];
+        /**
+         * ЯКЩО АВТОМАТИКА НЕ ПРАЦЮЄ:
+         * Впишіть свій нікнейм та назву репозиторію нижче між лапками.
+         */
+        const MANUAL_USER = ""; // Наприклад: "ivanov-dev"
+        const MANUAL_REPO = ""; // Назва репозиторію: "study-project"
 
-        async function fetchRepoContents() {
-            const fileListElement = document.getElementById('file-list');
+        async function init() {
+            const list = document.getElementById('file-list');
             const loader = document.getElementById('loader');
-            const repoTitle = document.getElementById('repo-title');
-            const errorMsg = document.getElementById('error-msg');
+            const title = document.getElementById('repo-title');
+            const errorBox = document.getElementById('error-msg');
+            const errorText = document.getElementById('error-details');
+            const debugText = document.getElementById('debug-info');
 
-            // Спроба автоматично визначити шлях (працює на GitHub Pages)
-            // Формат API: https://api.github.com/repos/{owner}/{repo}/contents/{path}
-            let apiUrl = `https://api.github.com/repos/${USERNAME}/${REPO_NAME}/contents/`;
+            let user, repo;
 
-            // Якщо ми локально або не на GitHub Pages, потрібно вказати шлях явно для тестів
-            if (USERNAME === 'localhost' || !USERNAME) {
-                repoTitle.innerText = "Будь ласка, завантажте на GitHub";
+            // Визначаємо користувача та репо
+            if (MANUAL_USER && MANUAL_REPO) {
+                user = MANUAL_USER;
+                repo = MANUAL_REPO;
+            } else {
+                const hostParts = window.location.hostname.split('.');
+                user = hostParts[0]; // На GitHub Pages це зазвичай нікнейм
+                
+                const pathParts = window.location.pathname.split('/').filter(p => p);
+                repo = pathParts[0]; // Перша частина шляху - це назва репо
+            }
+
+            // Допоміжна інфа для розробника
+            debugText.innerText = `Визначено: User=${user || '?'}, Repo=${repo || '?'}, URL=${window.location.href}`;
+
+            if (!user || user === 'localhost' || !repo) {
                 loader.style.display = 'none';
+                errorBox.classList.remove('hidden');
+                errorText.innerText = "Не вдалося автоматично визначити шлях до репозиторію. Це трапляється, якщо файл відкритий локально.";
+                title.innerText = "Помилка конфігурації";
                 return;
             }
 
-            repoTitle.innerText = `Матеріали: ${REPO_NAME}`;
+            title.innerText = `Репозиторій: ${repo}`;
+            const api = `https://api.github.com/repos/${user}/${repo}/contents/`;
 
             try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('Network response was not ok');
+                const response = await fetch(api);
                 
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.message || "Доступ до API обмежений або репозиторій не знайдено.");
+                }
+
                 const data = await response.json();
-                
                 loader.style.display = 'none';
 
-                // Сортування даних (папки спочатку, потім файли за назвою)
+                // Сортування (папки спочатку, потім файли за назвою)
                 data.sort((a, b) => {
-                    if (a.type === b.type) return a.name.localeCompare(b.name);
+                    if (a.type === b.type) return a.name.localeCompare(b.name, undefined, {numeric: true});
                     return a.type === 'dir' ? -1 : 1;
                 });
 
+                const HIDDEN = ['index.html', 'README.md', 'LICENSE', 'favicon.ico'];
+
                 data.forEach(item => {
-                    // Фільтрація ігнорованих файлів
-                    if (IGNORED_FILES.includes(item.name) || item.name.startsWith('.')) return;
+                    if (HIDDEN.includes(item.name) || item.name.startsWith('.')) return;
 
                     const li = document.createElement('li');
                     li.className = 'file-card bg-white p-4 rounded-xl border border-slate-200 flex items-center gap-3';
                     
                     const isDir = item.type === 'dir';
                     const icon = isDir ? '📁' : '📄';
-                    const link = isDir ? item.html_url : item.name;
+                    const url = isDir ? item.html_url : item.name;
 
                     li.innerHTML = `
-                        <span class="text-2xl">${icon}</span>
-                        <div class="flex-1 overflow-hidden">
-                            <a href="${link}" class="block font-medium text-blue-600 hover:text-blue-800 truncate">
+                        <div class="text-2xl">${icon}</div>
+                        <div class="flex-1 min-w-0">
+                            <a href="${url}" class="block font-semibold text-blue-600 hover:underline truncate">
                                 ${item.name}
                             </a>
-                            <span class="text-xs text-slate-400 uppercase">${isDir ? 'Папка' : 'Файл'}</span>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">${isDir ? 'Папка' : 'Документ'}</p>
                         </div>
                     `;
-                    fileListElement.appendChild(li);
+                    list.appendChild(li);
                 });
 
-                if (fileListElement.children.length === 0) {
-                    fileListElement.innerHTML = '<p class="text-center text-slate-500 col-span-full">У цій папці поки немає доступних файлів.</p>';
+                if (list.children.length === 0) {
+                    list.innerHTML = '<li class="col-span-full text-center text-slate-400 py-10 italic">Файлів не знайдено</li>';
                 }
 
-            } catch (error) {
-                console.error('Error fetching repo content:', error);
+            } catch (e) {
                 loader.style.display = 'none';
-                errorMsg.classList.remove('hidden');
+                errorBox.classList.remove('hidden');
+                errorText.innerText = e.message;
+                title.innerText = "Помилка API";
             }
         }
 
-        window.onload = fetchRepoContents;
+        window.onload = init;
     </script>
 </body>
 </html>
