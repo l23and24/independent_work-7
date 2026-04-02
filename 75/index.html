@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Самостійна робота: Тиск та Закон Паскаля</title>
     
     <style>
@@ -78,18 +79,20 @@
             font-size: 0.85em;
             font-weight: bold;
             border: 1px solid #fad7b5;
+            white-space: nowrap;
         }
 
         .task-content {
             text-align: justify;
+            text-align-last: left;
             hyphens: auto;
+            word-wrap: break-word;
         }
 
         .no-print {
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             margin-bottom: 20px;
-            gap: 10px;
         }
 
         button {
@@ -108,14 +111,6 @@
             background: #219150;
         }
 
-        .back-btn {
-            background: #7f8c8d;
-        }
-        
-        .back-btn:hover {
-            background: #6c7a7b;
-        }
-
         @media print {
             body { background: white; padding: 0; }
             .no-print { display: none !important; }
@@ -130,45 +125,100 @@
 <body>
 
     <div class="no-print">
-        <button class="back-btn" onclick="window.close()">← Закрити</button>
-        <button onclick="window.print()">🖨️ Друкувати роботу</button>
+        <button onclick="window.print()">Роздрукувати завдання</button>
     </div>
 
     <div class="header">
-        <h1>Самостійна робота №75</h1>
-        <p class="subtitle">Тема: Тиск твердих тіл. Закон Паскаля</p>
+        <h1>Самостійна робота з фізики (7 клас)</h1>
+        <p class="subtitle">Тема: "Тиск. Закон Паскаля. Гідравлічні машини"</p>
     </div>
 
+    <!-- Варіант 1 -->
     <div class="variant-card">
         <h2>Варіант 1</h2>
         
         <div class="task">
             <div class="task-header">
-                <span class="task-title">Завдання 1</span>
+                <span class="task-title">Завдання 1.</span>
                 <span class="points">2 бали</span>
             </div>
             <div class="task-content">
-                Дайте визначення тиску. У яких одиницях вимірюється тиск у системі СІ? За якою формулою його можна обчислити?
+                У чому полягає основна відмінність у передачі тиску твердими тілами та рідинами? Сформулюйте закон Паскаля словами.
             </div>
         </div>
 
         <div class="task">
             <div class="task-header">
-                <span class="task-title">Завдання 2</span>
+                <span class="task-title">Завдання 2.</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                Чому повітряна кулька набуває кулястої форми, коли ми її надуваємо, а не витягується лише в один бік? Поясніть це явище.
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 3.</span>
                 <span class="points">3 бали</span>
             </div>
             <div class="task-content">
-                Сформулюйте закон Паскаля. Чому він не справджується для твердих тіл?
+                Кіт Мурчик масою <b>4 кг</b> стоїть на підлозі. Площа його чотирьох лап становить <b>80 см<sup>2</sup></b>. Обчисліть тиск Мурчика на підлогу (прийміть <b>g ≈ 10 Н/кг</b>).
             </div>
         </div>
 
         <div class="task">
             <div class="task-header">
-                <span class="task-title">Завдання 3</span>
-                <span class="points">7 балів</span>
+                <span class="task-title">Завдання 4.</span>
+                <span class="points">5 балів</span>
             </div>
             <div class="task-content">
-                Який тиск чинить на підлогу хлопчик масою 48 кг, якщо площа підошви його взуття дорівнює 160 см²? Обчисліть тиск для випадку, коли хлопчик стоїть на обох ногах.
+                Малий поршень гідравлічного преса має площу <b>S<sub>1</sub> = 20 см<sup>2</sup></b>, а великий — <b>S<sub>2</sub> = 400 см<sup>2</sup></b>. На малий поршень діє сила <b>F<sub>1</sub> = 100 Н</b>. Яка сила <b>F<sub>2</sub></b> виникає на великому поршні?
+            </div>
+        </div>
+    </div>
+
+    <!-- Варіант 2 -->
+    <div class="variant-card">
+        <h2>Варіант 2</h2>
+        
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 1.</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                Поясніть, чому гази передають тиск однаково в усіх напрямках? Опишіть механізм передачі тиску молекулами газу при зіткненні зі стінками посудини.
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 2.</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                Якщо вичавлювати зубну пасту з тюбика, вона виходить з отвору незалежно від того, де ви стиснули тюбик. Який закон фізики тут працює?
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 3.</span>
+                <span class="points">3 бали</span>
+            </div>
+            <div class="task-content">
+                На стіл поставили коробку. Вага коробки становить <b>60 Н</b>, а площа її дна — <b>0,12 м<sup>2</sup></b>. Який тиск чинить дана коробка на горизонтальну поверхню столу?
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 4.</span>
+                <span class="points">5 балів</span>
+            </div>
+            <div class="task-content">
+                У гідравлічному підйомнику на великому поршні площею <b>S<sub>2</sub> = 600 см<sup>2</sup></b> стоїть вантаж вагою <b>300 Н</b>. Яку силу <b>F<sub>1</sub></b> потрібно прикласти до малого поршня площею <b>S<sub>1</sub> = 15 см<sup>2</sup></b>?
             </div>
         </div>
     </div>
