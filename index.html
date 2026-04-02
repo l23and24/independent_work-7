@@ -5,40 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Самостійні роботи: 7 клас</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; }
+        body { 
+            background-color: #f8fafc; 
+            font-family: 'Inter', sans-serif; 
+        }
         .lesson-card { 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .lesson-card.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
         .lesson-card:hover { 
-            transform: scale(1.05);
-            z-index: 10;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
+        /* Кастомний скроллбар */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="p-4 md:p-8 text-slate-800">
+<body class="p-4 md:p-12 text-slate-800">
     <div class="max-w-6xl mx-auto">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl font-extrabold mb-3 text-slate-900 tracking-tight">Самостійні роботи 7 клас</h1>
-            <div class="h-1 w-24 bg-blue-600 mx-auto rounded-full mb-4"></div>
-            <p class="text-slate-500 max-w-md mx-auto">Оберіть номер роботи для перегляду завдань. Кожна кнопка веде до відповідної папки з матеріалами.</p>
+        <header class="mb-16 text-center">
+            <span class="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-wider text-blue-700 uppercase bg-blue-100 rounded-full">
+                Навчальний матеріал
+            </span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-slate-900 tracking-tight">
+                Самостійні роботи <span class="text-blue-600">7 клас</span>
+            </h1>
+            <div class="h-1.5 w-20 bg-blue-600 mx-auto rounded-full mb-6"></div>
+            <p class="text-slate-500 max-w-xl mx-auto text-lg leading-relaxed">
+                Повний перелік завдань для підготовки. Оберіть номер роботи, щоб відкрити відповідні матеріали.
+            </p>
         </header>
 
         <!-- Сітка кнопок -->
-        <div id="lesson-grid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 md:gap-4">
+        <div id="lesson-grid" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-3 md:gap-4">
             <!-- Кнопки генеруються скриптом -->
         </div>
 
-        <footer class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-            <p>Усього робіт: 105 • Структура: папки від 1 до 105</p>
+        <footer class="mt-24 pt-10 border-t border-slate-200 text-center">
+            <div class="flex flex-col items-center gap-2">
+                <p class="text-slate-500 font-medium">Усього доступно робіт: <span class="text-blue-600">105</span></p>
+                <p class="text-slate-400 text-sm italic">Структура репозиторію: кожна робота у власній папці (1-105)</p>
+            </div>
         </footer>
     </div>
 
     <script>
         /**
-         * ЛОГІКА ГЕНЕРАЦІЇ:
-         * Створюємо 105 кнопок.
-         * Кожна кнопка веде на "номер/" - браузер сам знайде там index.html.
+         * ГЕНЕРАЦІЯ СІТКИ
+         * Створюємо посилання на папки. На GitHub Pages шлях "./номер/index.html" 
+         * є найбільш надійним для відкриття конкретного файлу.
          */
         function generateGrid() {
             const grid = document.getElementById('lesson-grid');
@@ -47,28 +72,37 @@
             for (let i = 1; i <= totalLessons; i++) {
                 const link = document.createElement('a');
                 
-                // Найбільш універсальний шлях для GitHub Pages: просто номер папки зі слешем
-                link.href = i + "/"; 
+                // Змінено шлях на більш явний: додано index.html
+                // Це допомагає, якщо сервер GitHub Pages не налаштований на auto-index
+                link.href = `./${i}/index.html`; 
                 
                 link.className = `
                     lesson-card 
-                    flex items-center justify-center 
-                    aspect-square rounded-xl 
+                    flex flex-col items-center justify-center 
+                    aspect-square rounded-2xl 
                     bg-white border border-slate-200 
-                    text-lg font-bold text-slate-700
-                    shadow-sm hover:shadow-md hover:border-blue-500 hover:text-blue-600
-                    bg-gradient-to-br hover:from-white hover:to-blue-50
-                    cursor-pointer
+                    text-xl font-bold text-slate-700
+                    shadow-sm hover:border-blue-400 hover:text-blue-600
+                    cursor-pointer group
                 `;
                 
-                link.innerHTML = `<span>${i}</span>`;
-                link.title = `Відкрити роботу №${i}`;
+                link.innerHTML = `
+                    <span class="group-hover:scale-110 transition-transform">${i}</span>
+                    <span class="text-[10px] uppercase tracking-widest text-slate-400 font-normal mt-1 group-hover:text-blue-400">Робота</span>
+                `;
+                
+                link.title = `Перейти до роботи №${i}`;
                 
                 grid.appendChild(link);
+
+                // Анімація появи з затримкою
+                setTimeout(() => {
+                    link.classList.add('visible');
+                }, i * 15);
             }
         }
 
-        window.onload = generateGrid;
+        document.addEventListener('DOMContentLoaded', generateGrid);
     </script>
 </body>
 </html>
