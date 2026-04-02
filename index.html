@@ -3,106 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Самостійні роботи: 7 клас</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Самостійна робота: Тиск та Закон Паскаля</title>
+    
     <style>
-        body { 
-            background-color: #f8fafc; 
-            font-family: 'Inter', sans-serif; 
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e67e22;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
         }
-        .lesson-card { 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            transform: translateY(10px);
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--bg-color);
         }
-        .lesson-card.visible {
-            opacity: 1;
-            transform: translateY(0);
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        .lesson-card:hover { 
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+        h1 { color: var(--primary-color); margin-bottom: 5px; }
+        .subtitle { color: #7f8c8d; font-size: 1.1em; }
+
+        .variant-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--primary-color);
+            margin-bottom: 30px;
         }
-        /* Кастомний скроллбар */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    </style>
-</head>
-<body class="p-4 md:p-12 text-slate-800">
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-16 text-center">
-            <span class="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-wider text-blue-700 uppercase bg-blue-100 rounded-full">
-                Навчальний матеріал
-            </span>
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-slate-900 tracking-tight">
-                Самостійні роботи <span class="text-blue-600">7 клас</span>
-            </h1>
-            <div class="h-1.5 w-20 bg-blue-600 mx-auto rounded-full mb-6"></div>
-            <p class="text-slate-500 max-w-xl mx-auto text-lg leading-relaxed">
-                Повний перелік завдань для підготовки. Оберіть номер роботи, щоб відкрити відповідні матеріали.
-            </p>
-        </header>
 
-        <!-- Сітка кнопок -->
-        <div id="lesson-grid" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-3 md:gap-4">
-            <!-- Кнопки генеруються скриптом -->
-        </div>
+        .variant-card h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            text-align: center;
+        }
 
-        <footer class="mt-24 pt-10 border-t border-slate-200 text-center">
-            <div class="flex flex-col items-center gap-2">
-                <p class="text-slate-500 font-medium">Усього доступно робіт: <span class="text-blue-600">105</span></p>
-                <p class="text-slate-400 text-sm italic">Структура репозиторію: кожна робота у власній папці (1-105)</p>
-            </div>
-        </footer>
-    </div>
+        .task {
+            margin-bottom: 25px;
+        }
 
-    <script>
-        /**
-         * ГЕНЕРАЦІЯ СІТКИ
-         * Створюємо посилання на папки. На GitHub Pages шлях "./номер/index.html" 
-         * є найбільш надійним для відкриття конкретного файлу.
-         */
-        function generateGrid() {
-            const grid = document.getElementById('lesson-grid');
-            const totalLessons = 105;
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
 
-            for (let i = 1; i <= totalLessons; i++) {
-                const link = document.createElement('a');
-                
-                // Змінено шлях на більш явний: додано index.html
-                // Це допомагає, якщо сервер GitHub Pages не налаштований на auto-index
-                link.href = `./${i}/index.html`; 
-                
-                link.className = `
-                    lesson-card 
-                    flex flex-col items-center justify-center 
-                    aspect-square rounded-2xl 
-                    bg-white border border-slate-200 
-                    text-xl font-bold text-slate-700
-                    shadow-sm hover:border-blue-400 hover:text-blue-600
-                    cursor-pointer group
-                `;
-                
-                link.innerHTML = `
-                    <span class="group-hover:scale-110 transition-transform">${i}</span>
-                    <span class="text-[10px] uppercase tracking-widest text-slate-400 font-normal mt-1 group-hover:text-blue-400">Робота</span>
-                `;
-                
-                link.title = `Перейти до роботи №${i}`;
-                
-                grid.appendChild(link);
+        .task-title {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.1em;
+        }
 
-                // Анімація появи з затримкою
-                setTimeout(() => {
-                    link.classList.add('visible');
-                }, i * 15);
+        .points {
+            background: #fdf2e9;
+            color: var(--accent-color);
+            padding: 2px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            border: 1px solid #fad7b5;
+        }
+
+        .task-content {
+            text-align: justify;
+            text-align-last: left;
+            hyphens: auto;
+        }
+
+        .no-print {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #27ae60;
+            color: white;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #219150;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .variant-card { 
+                box-shadow: none; 
+                border: 1px solid #ccc; 
+                page-break-after: always;
             }
         }
+    </style>
+</head>
+<body>
 
-        document.addEventListener('DOMContentLoaded', generateGrid);
-    </script>
+    <div class="no-print">
+        <button onclick="window.print()">Роздрукувати завдання</button>
+    </div>
+
+    <div class="header">
+        <h1>Самостійна робота з фізики (7 клас)</h1>
+        <p class="subtitle">Тема: "Тиск. Закон Паскаля. Гідравлічні машини"</p>
+    </div>
+
+    <!-- Варіант 1 -->
+    <div class="variant-card">
+        <h2>Варіант 1</h2>
+        
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 1.</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                У чому полягає основна відмінність у передачі тиску твердими тілами та рідинами? Сформулюйте закон Паскаля словами.
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 2.</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                Чому повітряна кулька набуває кулястої форми, коли ми її надуваємо, а не витягується лише в один бік? Поясніть це явище.
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 3.</span>
+                <span class="points">3 бали</span>
+            </div>
+            <div class="task-content">
+                Кіт Мурчик масою <b>4 кг</b> стоїть на підлозі. Площа його чотирьох лап становить <b>80 см<sup>2</sup></b>. Обчисліть тиск Мурчика на підлогу (прийміть <b>g ≈ 10 Н/кг</b>).
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 4.</span>
+                <span class="points">5 балів</span>
+            </div>
+            <div class="task-content">
+                Малий поршень гідравлічного преса має площу <b>S<sub>1</sub> = 20 см<sup>2</sup></b>, а великий — <b>S<sub>2</sub> = 400 см<sup>2</sup></b>. На малий поршень діє сила <b>F<sub>1</sub> = 100 Н</b>. Яка сила <b>F<sub>2</sub></b> виникає на великому поршні?
+            </div>
+        </div>
+    </div>
+
+    <!-- Варіант 2 -->
+    <div class="variant-card">
+        <h2>Варіант 2</h2>
+        
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 1.</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                Поясніть, чому гази передають тиск однаково в усіх напрямках? Опишіть механізм передачі тиску молекулами газу при зіткненні зі стінками посудини.
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 2.</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                Якщо вичавлювати зубну пасту з тюбика, вона виходить з отвору незалежно від того, де ви стиснули тюбик. Який закон фізики тут працює?
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 3.</span>
+                <span class="points">3 бали</span>
+            </div>
+            <div class="task-content">
+                На стіл поставили коробку. Вага коробки становить <b>60 Н</b>, а площа її дна — <b>0,12 м<sup>2</sup></b>. Який тиск чинить дана коробка на горизонтальну поверхню столу?
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 4.</span>
+                <span class="points">5 балів</span>
+            </div>
+            <div class="task-content">
+                У гідравлічному підйомнику на великому поршні площею <b>S<sub>2</sub> = 600 см<sup>2</sup></b> стоїть вантаж вагою <b>300 Н</b>. Яку силу <b>F<sub>1</sub></b> потрібно прикласти до малого поршня площею <b>S<sub>1</sub> = 15 см<sup>2</sup></b>?
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
