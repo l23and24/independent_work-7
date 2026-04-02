@@ -37,9 +37,8 @@
     <script>
         /**
          * ЛОГІКА ГЕНЕРАЦІЇ:
-         * Ми просто створюємо 105 посилань. 
-         * Кожне посилання веде за адресою: "номер_уроку/"
-         * Наприклад, кнопка 5 веде на вашу-адресу.github.io/назва-репо/5/
+         * Ми створюємо 105 посилань. 
+         * Щоб уникнути білого екрану, ми явно вказуємо шлях до index.html всередині папки.
          */
         function generateGrid() {
             const grid = document.getElementById('lesson-grid');
@@ -47,8 +46,10 @@
 
             for (let i = 1; i <= totalLessons; i++) {
                 const link = document.createElement('a');
-                // Шлях до папки. Якщо папка називається просто цифрою, шлях буде "i/"
-                link.href = `${i}/`; 
+                
+                // Використовуємо прямий шлях до index.html у папці для надійності
+                link.href = `./${i}/index.html`; 
+                
                 link.className = `
                     lesson-card 
                     flex items-center justify-center 
@@ -57,18 +58,16 @@
                     text-lg font-bold text-slate-700
                     shadow-sm hover:shadow-md hover:border-blue-500 hover:text-blue-600
                     bg-gradient-to-br hover:from-white hover:to-blue-50
+                    cursor-pointer
                 `;
                 
                 link.innerHTML = `<span>${i}</span>`;
-                
-                // Додаємо підказку (title) при наведенні
                 link.title = `Відкрити роботу №${i}`;
                 
                 grid.appendChild(link);
             }
         }
 
-        // Запускаємо генерацію при завантаженні
         window.onload = generateGrid;
     </script>
 </body>
