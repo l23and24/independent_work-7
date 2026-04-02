@@ -3,225 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Самостійна робота: Тиск та Закон Паскаля</title>
-    
+    <title>Самостійні роботи 7 клас</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #e67e22;
-            --bg-color: #f4f4f9;
-            --card-bg: #ffffff;
-            --text-color: #333;
-        }
-
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        .work-card {
+            transition: all 0.2s ease-in-out;
         }
-
-        h1 { color: var(--primary-color); margin-bottom: 5px; }
-        .subtitle { color: #7f8c8d; font-size: 1.1em; }
-
-        .variant-card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-top: 6px solid var(--primary-color);
-            margin-bottom: 30px;
+        .work-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-
-        .variant-card h2 {
-            color: var(--primary-color);
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
-            text-align: center;
-        }
-
-        .task {
-            margin-bottom: 25px;
-        }
-
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .task-title {
-            font-weight: bold;
-            color: var(--accent-color);
-            font-size: 1.1em;
-        }
-
-        .points {
-            background: #fdf2e9;
-            color: var(--accent-color);
-            padding: 2px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            font-weight: bold;
-            border: 1px solid #fad7b5;
-            white-space: nowrap;
-        }
-
-        .task-content {
-            text-align: justify;
-            text-align-last: left;
-            hyphens: auto;
-            word-wrap: break-word;
-        }
-
-        .no-print {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            background: #27ae60;
-            color: white;
-            font-size: 1em;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background: #219150;
-        }
-
-        @media print {
-            body { background: white; padding: 0; }
-            .no-print { display: none !important; }
-            .variant-card { 
-                box-shadow: none; 
-                border: 1px solid #ccc; 
-                page-break-after: always;
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #0f172a;
+                color: #f1f5f9;
+            }
+            .card-bg {
+                background-color: #1e293b;
+                border-color: #334155;
+            }
+            .card-bg:hover {
+                background-color: #334155;
             }
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen p-4 md:p-8">
 
-    <div class="no-print">
-        <button onclick="window.print()">Роздрукувати завдання</button>
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4 text-indigo-600 dark:text-indigo-400">
+                Самостійні роботи: 7 Клас
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400 mb-8">
+                Збірник навчальних матеріалів та практичних завдань
+            </p>
+            
+            <!-- Search Bar -->
+            <div class="relative max-w-md mx-auto">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Пошук за номером роботи..." 
+                    class="w-full px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm"
+                >
+                <div class="absolute right-4 top-3.5 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Grid of buttons -->
+        <div id="gridContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-4">
+            <!-- Buttons will be generated by JavaScript -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-16 text-center text-slate-400 text-sm">
+            <p>&copy; 2024 GitHub Repository • Навчальні матеріали</p>
+        </footer>
     </div>
 
-    <div class="header">
-        <h1>Самостійна робота з фізики (7 клас)</h1>
-        <p class="subtitle">Тема: "Тиск. Закон Паскаля. Гідравлічні машини"</p>
-    </div>
+    <script>
+        const gridContainer = document.getElementById('gridContainer');
+        const searchInput = document.getElementById('searchInput');
+        const totalWorks = 105;
 
-    <!-- Варіант 1 -->
-    <div class="variant-card">
-        <h2>Варіант 1</h2>
-        
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 1.</span>
-                <span class="points">2 бали</span>
-            </div>
-            <div class="task-content">
-                У чому полягає основна відмінність у передачі тиску твердими тілами та рідинами? Сформулюйте закон Паскаля словами.
-            </div>
-        </div>
+        // Function to create buttons
+        function generateButtons() {
+            for (let i = 1; i <= totalWorks; i++) {
+                const link = document.createElement('a');
+                link.href = `./${i}/index.html`;
+                link.className = 'work-card card-bg bg-white border border-slate-200 rounded-lg p-4 text-center font-semibold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 block';
+                link.setAttribute('data-number', i);
+                
+                link.innerHTML = `
+                    <span class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Робота</span>
+                    <span class="text-xl">${i}</span>
+                `;
+                
+                gridContainer.appendChild(link);
+            }
+        }
 
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 2.</span>
-                <span class="points">2 бали</span>
-            </div>
-            <div class="task-content">
-                Чому повітряна кулька набуває кулястої форми, коли ми її надуваємо, а не витягується лише в один бік? Поясніть це явище.
-            </div>
-        </div>
+        // Search logic
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.trim();
+            const cards = document.querySelectorAll('.work-card');
+            
+            cards.forEach(card => {
+                const num = card.getAttribute('data-number');
+                if (num.includes(term) || term === "") {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
 
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 3.</span>
-                <span class="points">3 бали</span>
-            </div>
-            <div class="task-content">
-                Кіт Мурчик масою <b>4 кг</b> стоїть на підлозі. Площа його чотирьох лап становить <b>80 см<sup>2</sup></b>. Обчисліть тиск Мурчика на підлогу (прийміть <b>g ≈ 10 Н/кг</b>).
-            </div>
-        </div>
-
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 4.</span>
-                <span class="points">5 балів</span>
-            </div>
-            <div class="task-content">
-                Малий поршень гідравлічного преса має площу <b>S<sub>1</sub> = 20 см<sup>2</sup></b>, а великий — <b>S<sub>2</sub> = 400 см<sup>2</sup></b>. На малий поршень діє сила <b>F<sub>1</sub> = 100 Н</b>. Яка сила <b>F<sub>2</sub></b> виникає на великому поршні?
-            </div>
-        </div>
-    </div>
-
-    <!-- Варіант 2 -->
-    <div class="variant-card">
-        <h2>Варіант 2</h2>
-        
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 1.</span>
-                <span class="points">2 бали</span>
-            </div>
-            <div class="task-content">
-                Поясніть, чому гази передають тиск однаково в усіх напрямках? Опишіть механізм передачі тиску молекулами газу при зіткненні зі стінками посудини.
-            </div>
-        </div>
-
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 2.</span>
-                <span class="points">2 бали</span>
-            </div>
-            <div class="task-content">
-                Якщо вичавлювати зубну пасту з тюбика, вона виходить з отвору незалежно від того, де ви стиснули тюбик. Який закон фізики тут працює?
-            </div>
-        </div>
-
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 3.</span>
-                <span class="points">3 бали</span>
-            </div>
-            <div class="task-content">
-                На стіл поставили коробку. Вага коробки становить <b>60 Н</b>, а площа її дна — <b>0,12 м<sup>2</sup></b>. Який тиск чинить дана коробка на горизонтальну поверхню столу?
-            </div>
-        </div>
-
-        <div class="task">
-            <div class="task-header">
-                <span class="task-title">Завдання 4.</span>
-                <span class="points">5 балів</span>
-            </div>
-            <div class="task-content">
-                У гідравлічному підйомнику на великому поршні площею <b>S<sub>2</sub> = 600 см<sup>2</sup></b> стоїть вантаж вагою <b>300 Н</b>. Яку силу <b>F<sub>1</sub></b> потрібно прикласти до малого поршня площею <b>S<sub>1</sub> = 15 см<sup>2</sup></b>?
-            </div>
-        </div>
-    </div>
-
+        // Initialize
+        window.onload = generateButtons;
+    </script>
 </body>
 </html>
