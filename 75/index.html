@@ -82,14 +82,14 @@
 
         .task-content {
             text-align: justify;
-            text-align-last: left;
             hyphens: auto;
         }
 
         .no-print {
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             margin-bottom: 20px;
+            gap: 10px;
         }
 
         button {
@@ -108,6 +108,14 @@
             background: #219150;
         }
 
+        .back-btn {
+            background: #7f8c8d;
+        }
+        
+        .back-btn:hover {
+            background: #6c7a7b;
+        }
+
         @media print {
             body { background: white; padding: 0; }
             .no-print { display: none !important; }
@@ -117,4 +125,53 @@
                 page-break-after: always;
             }
         }
-    </style
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <button class="back-btn" onclick="window.close()">← Закрити</button>
+        <button onclick="window.print()">🖨️ Друкувати роботу</button>
+    </div>
+
+    <div class="header">
+        <h1>Самостійна робота №75</h1>
+        <p class="subtitle">Тема: Тиск твердих тіл. Закон Паскаля</p>
+    </div>
+
+    <div class="variant-card">
+        <h2>Варіант 1</h2>
+        
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 1</span>
+                <span class="points">2 бали</span>
+            </div>
+            <div class="task-content">
+                Дайте визначення тиску. У яких одиницях вимірюється тиск у системі СІ? За якою формулою його можна обчислити?
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 2</span>
+                <span class="points">3 бали</span>
+            </div>
+            <div class="task-content">
+                Сформулюйте закон Паскаля. Чому він не справджується для твердих тіл?
+            </div>
+        </div>
+
+        <div class="task">
+            <div class="task-header">
+                <span class="task-title">Завдання 3</span>
+                <span class="points">7 балів</span>
+            </div>
+            <div class="task-content">
+                Який тиск чинить на підлогу хлопчик масою 48 кг, якщо площа підошви його взуття дорівнює 160 см²? Обчисліть тиск для випадку, коли хлопчик стоїть на обох ногах.
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
