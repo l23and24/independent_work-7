@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зміст репозиторію</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+        .file-card {
+            transition: all 0.2s ease;
+        }
+        .file-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-10 text-center">
+            <h1 id="repo-title" class="text-3xl font-bold text-slate-800 mb-2">Завантаження змісту...</h1>
+            <p class="text-slate-500">Список файлів генерується автоматично через GitHub API</p>
+        </header>
+
+        <div id="loader" class="flex justify-center my-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+
+        <div id="error-msg" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mb-6 text-red-700">
+            <p class="font-bold">Помилка!</p>
+            <p>Не вдалося отримати дані. Перевірте налаштування репозиторію або ліміти API.</p>
+        </div>
+
+        <ul id="file-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Файли з'являться тут -->
+        </ul>
+
+        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
+            <p>Створено автоматично для вашого GitHub-проекту</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- НАЛАШТУВАННЯ ---
+        // Якщо ви використовуєте GitHub Pages, скрипт спробує визначити репозиторій автоматично.
+        // Якщо ні - введіть дані вручну нижче:
+        const USERNAME = window.location.hostname.split('.')[0]; 
+        const REPO_NAME = window.location.pathname.split('/')[1];
+        
+        // Ви можете ігнорувати певні файли
+        const IGNORED_FILES = ['index.html', 'README.md', 'LICENSE', '.gitignore'];
+
+        async function fetchRepoContents() {
+            const fileListElement = document.getElementById('file-list');
+            const loader = document.getElementById('loader');
+            const repoTitle = document.getElementById('repo-title');
+            const errorMsg = document.getElementById('error-msg');
+
+            // Спроба автоматично визначити шлях (працює на GitHub Pages)
+            // Формат API: https://api.github.com/repos/{owner}/{repo}/contents/{path}
+            let apiUrl = `https://api.github.com/repos/${USERNAME}/${REPO_NAME}/contents/`;
+
+            // Якщо ми локально або не на GitHub Pages, потрібно вказати шлях явно для тестів
+            if (USERNAME === 'localhost' || !USERNAME) {
+                repoTitle.innerText = "Будь ласка, завантажте на GitHub";
+                loader.style.display = 'none';
+                return;
+            }
+
+            repoTitle.innerText = `Матеріали: ${REPO_NAME}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                
+                loader.style.display = 'none';
+
+                // Сортування даних (папки спочатку, потім файли за назвою)
+                data.sort((a, b) => {
+                    if (a.type === b.type) return a.name.localeCompare(b.name);
+                    return a.type === 'dir' ? -1 : 1;
+                });
+
+                data.forEach(item => {
+                    // Фільтрація ігнорованих файлів
+                    if (IGNORED_FILES.includes(item.name) || item.name.startsWith('.')) return;
+
+                    const li = document.createElement('li');
+                    li.className = 'file-card bg-white p-4 rounded-xl border border-slate-200 flex items-center gap-3';
+                    
+                    const isDir = item.type === 'dir';
+                    const icon = isDir ? '📁' : '📄';
+                    const link = isDir ? item.html_url : item.name;
+
+                    li.innerHTML = `
+                        <span class="text-2xl">${icon}</span>
+                        <div class="flex-1 overflow-hidden">
+                            <a href="${link}" class="block font-medium text-blue-600 hover:text-blue-800 truncate">
+                                ${item.name}
+                            </a>
+                            <span class="text-xs text-slate-400 uppercase">${isDir ? 'Папка' : 'Файл'}</span>
+                        </div>
+                    `;
+                    fileListElement.appendChild(li);
+                });
+
+                if (fileListElement.children.length === 0) {
+                    fileListElement.innerHTML = '<p class="text-center text-slate-500 col-span-full">У цій папці поки немає доступних файлів.</p>';
+                }
+
+            } catch (error) {
+                console.error('Error fetching repo content:', error);
+                loader.style.display = 'none';
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        window.onload = fetchRepoContents;
+    </script>
+</body>
+</html>
