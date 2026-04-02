@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Навчальний курс: 105 уроків</title>
+    <title>Самостійні роботи: 7 клас</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; }
@@ -19,9 +19,9 @@
 <body class="p-4 md:p-8 text-slate-800">
     <div class="max-w-6xl mx-auto">
         <header class="mb-12 text-center">
-            <h1 class="text-4xl font-extrabold mb-3 text-slate-900 tracking-tight">Мій Навчальний Курс</h1>
+            <h1 class="text-4xl font-extrabold mb-3 text-slate-900 tracking-tight">Самостійні роботи 7 клас</h1>
             <div class="h-1 w-24 bg-blue-600 mx-auto rounded-full mb-4"></div>
-            <p class="text-slate-500 max-w-md mx-auto">Оберіть номер уроку для перегляду матеріалів. Кожна кнопка веде до відповідної папки у репозиторії.</p>
+            <p class="text-slate-500 max-w-md mx-auto">Оберіть номер роботи для перегляду завдань. Кожна кнопка веде до відповідної папки з матеріалами.</p>
         </header>
 
         <!-- Сітка кнопок -->
@@ -30,7 +30,7 @@
         </div>
 
         <footer class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-            <p>Усього уроків: 105 • Структура: папки від 1 до 105</p>
+            <p>Усього робіт: 105 • Структура: папки від 1 до 105</p>
         </footer>
     </div>
 
@@ -62,7 +62,7 @@
                 link.innerHTML = `<span>${i}</span>`;
                 
                 // Додаємо підказку (title) при наведенні
-                link.title = `Перейти до уроку №${i}`;
+                link.title = `Відкрити роботу №${i}`;
                 
                 grid.appendChild(link);
             }
