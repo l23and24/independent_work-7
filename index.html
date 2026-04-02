@@ -3,152 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Зміст репозиторію</title>
+    <title>Навчальний курс: 105 уроків</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .file-card { transition: all 0.2s ease; }
-        .file-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; }
+        .lesson-card { 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lesson-card:hover { 
+            transform: scale(1.05);
+            z-index: 10;
+        }
     </style>
 </head>
-<body class="p-4 md:p-10 text-slate-800">
-    <div class="max-w-4xl mx-auto">
-        <header class="mb-10 text-center">
-            <h1 id="repo-title" class="text-3xl font-bold mb-2 text-blue-900">Завантаження...</h1>
-            <p id="repo-description" class="text-slate-500">Автоматичне сканування файлів репозиторію</p>
+<body class="p-4 md:p-8 text-slate-800">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-extrabold mb-3 text-slate-900 tracking-tight">Мій Навчальний Курс</h1>
+            <div class="h-1 w-24 bg-blue-600 mx-auto rounded-full mb-4"></div>
+            <p class="text-slate-500 max-w-md mx-auto">Оберіть номер уроку для перегляду матеріалів. Кожна кнопка веде до відповідної папки у репозиторії.</p>
         </header>
 
-        <!-- Індикатор завантаження -->
-        <div id="loader" class="flex flex-col items-center justify-center my-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mb-4"></div>
-            <p class="text-slate-400">Отримуємо дані з GitHub...</p>
+        <!-- Сітка кнопок -->
+        <div id="lesson-grid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 md:gap-4">
+            <!-- Кнопки генеруються скриптом -->
         </div>
 
-        <!-- Повідомлення про помилку -->
-        <div id="error-msg" class="hidden bg-red-50 border-l-4 border-red-500 p-6 mb-10 rounded-r-lg">
-            <h3 class="font-bold text-red-800 text-lg mb-2">Сталася помилка 🔍</h3>
-            <p id="error-details" class="text-red-700"></p>
-            <div class="mt-4 p-3 bg-red-100 rounded text-xs font-mono text-red-900" id="debug-info"></div>
-            <p class="mt-4 text-sm text-slate-600">Переконайтеся, що репозиторій <b>Public</b>. Якщо ви відкриваєте файл просто з комп'ютера (не через інтернет-посилання), він може не працювати без налаштування MANUAL_USER/REPO.</p>
-        </div>
-
-        <!-- Список файлів -->
-        <ul id="file-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></ul>
-
-        <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-            <p>Автоматичне оновлення через GitHub API</p>
+        <footer class="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
+            <p>Усього уроків: 105 • Структура: папки від 1 до 105</p>
         </footer>
     </div>
 
     <script>
         /**
-         * НАЛАШТУВАННЯ:
-         * Якщо автоматика не спрацювала, впишіть свій нікнейм та назву репозиторію тут:
+         * ЛОГІКА ГЕНЕРАЦІЇ:
+         * Ми просто створюємо 105 посилань. 
+         * Кожне посилання веде за адресою: "номер_уроку/"
+         * Наприклад, кнопка 5 веде на вашу-адресу.github.io/назва-репо/5/
          */
-        const MANUAL_USER = ""; 
-        const MANUAL_REPO = ""; 
+        function generateGrid() {
+            const grid = document.getElementById('lesson-grid');
+            const totalLessons = 105;
 
-        async function init() {
-            const list = document.getElementById('file-list');
-            const loader = document.getElementById('loader');
-            const title = document.getElementById('repo-title');
-            const errorBox = document.getElementById('error-msg');
-            const errorText = document.getElementById('error-details');
-            const debugText = document.getElementById('debug-info');
-
-            let user, repo;
-
-            // Визначення логіки шляху
-            if (MANUAL_USER && MANUAL_REPO) {
-                user = MANUAL_USER;
-                repo = MANUAL_REPO;
-            } else {
-                const host = window.location.hostname;
-                const pathParts = window.location.pathname.split('/').filter(p => p);
-
-                if (host.includes('github.io')) {
-                    user = host.split('.')[0];
-                    repo = pathParts[0];
-                } else {
-                    // Якщо відкриваємо через домен або іншим чином
-                    user = MANUAL_USER;
-                    repo = MANUAL_REPO;
-                }
-            }
-
-            debugText.innerText = `Діагностика: Користувач=${user || 'не знайдено'}, Репозиторій=${repo || 'не знайдено'}`;
-
-            if (!user || !repo) {
-                loader.style.display = 'none';
-                errorBox.classList.remove('hidden');
-                errorText.innerText = "Скрипт не зміг автоматично визначити ваш репозиторій. Будь ласка, вкажіть MANUAL_USER та MANUAL_REPO у коді файлу index.html.";
-                title.innerText = "Потрібне налаштування";
-                return;
-            }
-
-            title.innerText = `Зміст: ${repo}`;
-            const api = `https://api.github.com/repos/${user}/${repo}/contents/`;
-
-            try {
-                const response = await fetch(api);
+            for (let i = 1; i <= totalLessons; i++) {
+                const link = document.createElement('a');
+                // Шлях до папки. Якщо папка називається просто цифрою, шлях буде "i/"
+                link.href = `${i}/`; 
+                link.className = `
+                    lesson-card 
+                    flex items-center justify-center 
+                    aspect-square rounded-xl 
+                    bg-white border border-slate-200 
+                    text-lg font-bold text-slate-700
+                    shadow-sm hover:shadow-md hover:border-blue-500 hover:text-blue-600
+                    bg-gradient-to-br hover:from-white hover:to-blue-50
+                `;
                 
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.message || "Помилка доступу до API.");
-                }
-
-                const data = await response.json();
-                loader.style.display = 'none';
-
-                // Сортування (числове порівняння для правильного порядку 1, 2, 10...)
-                data.sort((a, b) => {
-                    if (a.type === b.type) {
-                        return a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'});
-                    }
-                    return a.type === 'dir' ? -1 : 1;
-                });
-
-                const HIDDEN = ['index.html', 'README.md', 'LICENSE', 'favicon.ico', 'CNAME'];
-
-                data.forEach(item => {
-                    // Ігноруємо лише системні файли Git та наш index
-                    if (HIDDEN.includes(item.name) || (item.name.startsWith('.') && item.name.length > 2)) return;
-
-                    const li = document.createElement('li');
-                    li.className = 'file-card bg-white p-4 rounded-xl border border-slate-200 flex items-center gap-3';
-                    
-                    const isDir = item.type === 'dir';
-                    const icon = isDir ? '📁' : '📄';
-                    const url = isDir ? item.html_url : item.name;
-                    
-                    // Красиве ім'я (замінюємо підкреслення на пробіли)
-                    const displayName = item.name.replace(/_/g, ' ');
-
-                    li.innerHTML = `
-                        <div class="text-2xl">${icon}</div>
-                        <div class="flex-1 min-w-0 text-left">
-                            <a href="${url}" class="block font-semibold text-blue-600 hover:text-blue-800 truncate">
-                                ${displayName}
-                            </a>
-                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">${isDir ? 'Папка' : 'Документ'}</p>
-                        </div>
-                    `;
-                    list.appendChild(li);
-                });
-
-                if (list.children.length === 0) {
-                    list.innerHTML = '<li class="col-span-full text-center text-slate-400 py-10 italic text-sm">У цьому репозиторії поки немає файлів для показу.</li>';
-                }
-
-            } catch (e) {
-                loader.style.display = 'none';
-                errorBox.classList.remove('hidden');
-                errorText.innerText = "Помилка API: " + e.message;
-                title.innerText = "Упс!";
+                link.innerHTML = `<span>${i}</span>`;
+                
+                // Додаємо підказку (title) при наведенні
+                link.title = `Перейти до уроку №${i}`;
+                
+                grid.appendChild(link);
             }
         }
 
-        window.onload = init;
+        // Запускаємо генерацію при завантаженні
+        window.onload = generateGrid;
     </script>
 </body>
 </html>
