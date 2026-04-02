@@ -15,38 +15,38 @@
     <div class="max-w-4xl mx-auto">
         <header class="mb-10 text-center">
             <h1 id="repo-title" class="text-3xl font-bold mb-2 text-blue-900">Завантаження...</h1>
-            <p id="repo-description" class="text-slate-500">Отримання списку файлів через GitHub API</p>
+            <p id="repo-description" class="text-slate-500">Автоматичне сканування файлів репозиторію</p>
         </header>
 
         <!-- Індикатор завантаження -->
         <div id="loader" class="flex flex-col items-center justify-center my-20">
             <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mb-4"></div>
-            <p class="text-slate-400">Аналізуємо репозиторій...</p>
+            <p class="text-slate-400">Отримуємо дані з GitHub...</p>
         </div>
 
         <!-- Повідомлення про помилку -->
         <div id="error-msg" class="hidden bg-red-50 border-l-4 border-red-500 p-6 mb-10 rounded-r-lg">
-            <h3 class="font-bold text-red-800 text-lg mb-2">Щось пішло не так 🔍</h3>
+            <h3 class="font-bold text-red-800 text-lg mb-2">Сталася помилка 🔍</h3>
             <p id="error-details" class="text-red-700"></p>
             <div class="mt-4 p-3 bg-red-100 rounded text-xs font-mono text-red-900" id="debug-info"></div>
-            <p class="mt-4 text-sm text-slate-600">Порада: переконайтеся, що репозиторій <b>публічний</b> та перевірте налаштування MANUAL_USER/REPO в коді файлу.</p>
+            <p class="mt-4 text-sm text-slate-600">Переконайтеся, що репозиторій <b>Public</b>. Якщо ви відкриваєте файл просто з комп'ютера (не через інтернет-посилання), він може не працювати без налаштування MANUAL_USER/REPO.</p>
         </div>
 
         <!-- Список файлів -->
         <ul id="file-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></ul>
 
         <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-            <p>Generated via GitHub API Automation</p>
+            <p>Автоматичне оновлення через GitHub API</p>
         </footer>
     </div>
 
     <script>
         /**
-         * ЯКЩО АВТОМАТИКА НЕ ПРАЦЮЄ:
-         * Впишіть свій нікнейм та назву репозиторію нижче між лапками.
+         * НАЛАШТУВАННЯ:
+         * Якщо автоматика не спрацювала, впишіть свій нікнейм та назву репозиторію тут:
          */
-        const MANUAL_USER = ""; // Наприклад: "ivanov-dev"
-        const MANUAL_REPO = ""; // Назва репозиторію: "study-project"
+        const MANUAL_USER = ""; 
+        const MANUAL_REPO = ""; 
 
         async function init() {
             const list = document.getElementById('file-list');
@@ -58,30 +58,35 @@
 
             let user, repo;
 
-            // Визначаємо користувача та репо
+            // Визначення логіки шляху
             if (MANUAL_USER && MANUAL_REPO) {
                 user = MANUAL_USER;
                 repo = MANUAL_REPO;
             } else {
-                const hostParts = window.location.hostname.split('.');
-                user = hostParts[0]; // На GitHub Pages це зазвичай нікнейм
-                
+                const host = window.location.hostname;
                 const pathParts = window.location.pathname.split('/').filter(p => p);
-                repo = pathParts[0]; // Перша частина шляху - це назва репо
+
+                if (host.includes('github.io')) {
+                    user = host.split('.')[0];
+                    repo = pathParts[0];
+                } else {
+                    // Якщо відкриваємо через домен або іншим чином
+                    user = MANUAL_USER;
+                    repo = MANUAL_REPO;
+                }
             }
 
-            // Допоміжна інфа для розробника
-            debugText.innerText = `Визначено: User=${user || '?'}, Repo=${repo || '?'}, URL=${window.location.href}`;
+            debugText.innerText = `Діагностика: Користувач=${user || 'не знайдено'}, Репозиторій=${repo || 'не знайдено'}`;
 
-            if (!user || user === 'localhost' || !repo) {
+            if (!user || !repo) {
                 loader.style.display = 'none';
                 errorBox.classList.remove('hidden');
-                errorText.innerText = "Не вдалося автоматично визначити шлях до репозиторію. Це трапляється, якщо файл відкритий локально.";
-                title.innerText = "Помилка конфігурації";
+                errorText.innerText = "Скрипт не зміг автоматично визначити ваш репозиторій. Будь ласка, вкажіть MANUAL_USER та MANUAL_REPO у коді файлу index.html.";
+                title.innerText = "Потрібне налаштування";
                 return;
             }
 
-            title.innerText = `Репозиторій: ${repo}`;
+            title.innerText = `Зміст: ${repo}`;
             const api = `https://api.github.com/repos/${user}/${repo}/contents/`;
 
             try {
@@ -89,22 +94,25 @@
                 
                 if (!response.ok) {
                     const err = await response.json();
-                    throw new Error(err.message || "Доступ до API обмежений або репозиторій не знайдено.");
+                    throw new Error(err.message || "Помилка доступу до API.");
                 }
 
                 const data = await response.json();
                 loader.style.display = 'none';
 
-                // Сортування (папки спочатку, потім файли за назвою)
+                // Сортування (числове порівняння для правильного порядку 1, 2, 10...)
                 data.sort((a, b) => {
-                    if (a.type === b.type) return a.name.localeCompare(b.name, undefined, {numeric: true});
+                    if (a.type === b.type) {
+                        return a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'});
+                    }
                     return a.type === 'dir' ? -1 : 1;
                 });
 
-                const HIDDEN = ['index.html', 'README.md', 'LICENSE', 'favicon.ico'];
+                const HIDDEN = ['index.html', 'README.md', 'LICENSE', 'favicon.ico', 'CNAME'];
 
                 data.forEach(item => {
-                    if (HIDDEN.includes(item.name) || item.name.startsWith('.')) return;
+                    // Ігноруємо лише системні файли Git та наш index
+                    if (HIDDEN.includes(item.name) || (item.name.startsWith('.') && item.name.length > 2)) return;
 
                     const li = document.createElement('li');
                     li.className = 'file-card bg-white p-4 rounded-xl border border-slate-200 flex items-center gap-3';
@@ -112,12 +120,15 @@
                     const isDir = item.type === 'dir';
                     const icon = isDir ? '📁' : '📄';
                     const url = isDir ? item.html_url : item.name;
+                    
+                    // Красиве ім'я (замінюємо підкреслення на пробіли)
+                    const displayName = item.name.replace(/_/g, ' ');
 
                     li.innerHTML = `
                         <div class="text-2xl">${icon}</div>
-                        <div class="flex-1 min-w-0">
-                            <a href="${url}" class="block font-semibold text-blue-600 hover:underline truncate">
-                                ${item.name}
+                        <div class="flex-1 min-w-0 text-left">
+                            <a href="${url}" class="block font-semibold text-blue-600 hover:text-blue-800 truncate">
+                                ${displayName}
                             </a>
                             <p class="text-[10px] text-slate-400 uppercase tracking-wider">${isDir ? 'Папка' : 'Документ'}</p>
                         </div>
@@ -126,14 +137,14 @@
                 });
 
                 if (list.children.length === 0) {
-                    list.innerHTML = '<li class="col-span-full text-center text-slate-400 py-10 italic">Файлів не знайдено</li>';
+                    list.innerHTML = '<li class="col-span-full text-center text-slate-400 py-10 italic text-sm">У цьому репозиторії поки немає файлів для показу.</li>';
                 }
 
             } catch (e) {
                 loader.style.display = 'none';
                 errorBox.classList.remove('hidden');
-                errorText.innerText = e.message;
-                title.innerText = "Помилка API";
+                errorText.innerText = "Помилка API: " + e.message;
+                title.innerText = "Упс!";
             }
         }
 
