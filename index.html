@@ -37,8 +37,8 @@
     <script>
         /**
          * ЛОГІКА ГЕНЕРАЦІЇ:
-         * Ми створюємо 105 посилань. 
-         * Щоб уникнути білого екрану, ми явно вказуємо шлях до index.html всередині папки.
+         * Створюємо 105 кнопок.
+         * Кожна кнопка веде на "номер/" - браузер сам знайде там index.html.
          */
         function generateGrid() {
             const grid = document.getElementById('lesson-grid');
@@ -47,8 +47,8 @@
             for (let i = 1; i <= totalLessons; i++) {
                 const link = document.createElement('a');
                 
-                // Використовуємо прямий шлях до index.html у папці для надійності
-                link.href = `./${i}/index.html`; 
+                // Найбільш універсальний шлях для GitHub Pages: просто номер папки зі слешем
+                link.href = i + "/"; 
                 
                 link.className = `
                     lesson-card 
